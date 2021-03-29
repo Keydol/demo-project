@@ -2,13 +2,13 @@ from django.contrib import admin
 from django.db.models import Count
 
 from .models import (
-    AircraftsData,
-    AirportsData,
-    BoardingPasses,
-    Bookings,
-    Flights,
-    Seats,
-    TicketFlights,
+    AircraftData,
+    AirportData,
+    BoardingPass,
+    Booking,
+    Flight,
+    Seat,
+    TicketFlight,
     Ticket
 )
 
@@ -19,29 +19,31 @@ class TicketsInline(admin.TabularInline):
 
 
 class SeatsInline(admin.TabularInline):
-    model = Seats
+    model = Seat
     extra = 1
 
 
-class AircraftsDataInline(admin.TabularInline):
-    model = AircraftsData
+class TicketFlightsInline(admin.TabularInline):
+    model = TicketFlight
     extra = 1
 
+    raw_id_fields = ('flight', )
 
-@admin.register(AircraftsData)
-class AircraftsDataAdmin(admin.ModelAdmin):
+
+@admin.register(AircraftData)
+class AircraftDataAdmin(admin.ModelAdmin):
     # fields = (('model', 'range'), 'aircraft_code')
     list_display = ('aircraft_code', 'view_model', 'range')
     ordering = ['range', 'aircraft_code']
     list_filter = ['range']
-    #inlines = admin.ModelAdmin.inlines + [SeatsInline]
+    inlines = [SeatsInline]
 
     def view_model(self, obj):
         return obj.model['en']
 
 
-@admin.register(AirportsData)
-class AirportsDataAdmin(admin.ModelAdmin):
+@admin.register(AirportData)
+class AirportDataAdmin(admin.ModelAdmin):
     list_display = ('airport_code', 'view_airport_name', 'view_city', 'coordinates', 'timezone')
     ordering = ['airport_code', 'timezone']
     list_filter = ['timezone']
@@ -53,17 +55,22 @@ class AirportsDataAdmin(admin.ModelAdmin):
         return obj.airport_name['en']
 
 
-@admin.register(BoardingPasses)
-class BoardingPassesAdmin(admin.ModelAdmin):
-    #fields = ('ticket_no', 'flight_id', 'boarding_no', 'seat_no')
-    raw_id_fields = ('ticket_no', )
-    fields = ('ticket_no', 'boarding_no', 'seat_no')
-    list_display = ('ticket_no', 'flight_id', 'boarding_no', 'seat_no')
-    #ordering = ['ticket_no', 'flight_id']
+@admin.register(BoardingPass)
+class BoardingPassAdmin(admin.ModelAdmin):
+    raw_id_fields = ('id',)
+    fields = ('id', 'ticket_no', 'flight_id', 'boarding_no', 'seat_no')
+    list_display = ('pk', 'ticket_no', 'flight_id', 'boarding_no')
+    search_fields = ('ticket_no', )
+
+    # def get_queryset(self, request):
+    #     qs = super(BoardingPassesAdmin, self).get_queryset(request)
+    #     print(qs[:10])
+    #     return qs
+    #    return super().get_queryset(request).distinct('id')
 
 
-@admin.register(Bookings)
-class BookingsAdmin(admin.ModelAdmin):
+@admin.register(Booking)
+class BookingAdmin(admin.ModelAdmin):
     list_display = ('book_ref', "book_date", "total_amount", 'view_tickets_count')
     ordering = ['-book_date']
     list_filter = ['book_date']
@@ -78,8 +85,8 @@ class BookingsAdmin(admin.ModelAdmin):
         return obj.tickets_count
 
 
-@admin.register(Flights)
-class FlightsAdmin(admin.ModelAdmin):
+@admin.register(Flight)
+class FlightAdmin(admin.ModelAdmin):
     list_display = ('flight_id',
                     'flight_no',
                     'scheduled_departure',
@@ -93,18 +100,16 @@ class FlightsAdmin(admin.ModelAdmin):
                    'scheduled_arrival']
 
 
-
-
-@admin.register(Seats)
-class SeatsAdmin(admin.ModelAdmin):
+@admin.register(Seat)
+class SeatAdmin(admin.ModelAdmin):
     fields = ('id', 'aircraft_code', 'seat_no', 'fare_conditions')
     list_display = ('aircraft_code', 'seat_no', 'fare_conditions')
     ordering = ['aircraft_code', 'seat_no']
     list_filter = ['aircraft_code', 'seat_no']
 
 
-@admin.register(TicketFlights)
-class TicketFlightsAdmin(admin.ModelAdmin):
+@admin.register(TicketFlight)
+class TicketFlightAdmin(admin.ModelAdmin):
     raw_id_fields = ('ticket_no', 'flight')
     list_display = ('ticket_no', 'flight', 'fare_conditions', 'amount')
     ordering = ['ticket_no', 'amount']
@@ -112,9 +117,11 @@ class TicketFlightsAdmin(admin.ModelAdmin):
 
 
 @admin.register(Ticket)
-class TicketsAdmin(admin.ModelAdmin):
+class TicketAdmin(admin.ModelAdmin):
     raw_id_fields = ('book_ref', )
     fields = ('book_ref', 'ticket_no', ('passenger_id', 'passenger_name'), 'contact_data')
 
     list_display = ('ticket_no', 'book_ref', 'passenger_id', 'passenger_name')
     search_fields = ['passenger_name', 'ticket_no', 'passenger_id']
+
+    inlines = [TicketFlightsInline]

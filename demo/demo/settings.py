@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'booking',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +52,14 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'demo.urls'
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny'
+    ]
+}
 
 TEMPLATES = [
     {
@@ -81,7 +90,7 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD': '1qaz',
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '5432',
     }
 }
 
