@@ -27,6 +27,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+TELEGRAM_API_TOKEN = '1771740594:AAHOJFGaVSFsl9LVDBaKosHWsMFjTv35QvQ'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'arsentest1mail@gmail.com'
+EMAIL_HOST_PASSWORD = 'bmhjav640'
+EMAIL_PORT = 587
 
 # Application definition
 
@@ -128,10 +135,10 @@ USE_L10N = True
 USE_TZ = True
 
 # CELERY SETTINGS
+CELERY_BROKER_URL = 'redis://localhost'
 CELERY_TIMEZONE = "Europe/Moscow"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
-CELERY_BROKER_URL = 'redis://localhost'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/

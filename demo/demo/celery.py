@@ -1,8 +1,11 @@
 import os
 
+import requests
 from celery import Celery
 
 # set the default Django settings module for the 'celery' program.
+from .settings import TELEGRAM_API_TOKEN
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'demo.settings')
 
 app = Celery('demo', broker='redis://localhost')
@@ -20,3 +23,4 @@ app.autodiscover_tasks()
 @app.task(bind=True)
 def debug_task(self):
     print(f'Request : {self.request!r}')
+

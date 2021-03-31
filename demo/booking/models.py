@@ -23,7 +23,7 @@ class AirportData(models.Model):
     timezone = models.TextField()
 
     def __str__(self):
-        return f"{self.airport_code}: {self.airport_name['ru']}"
+        return f"{self.airport_code}: {self.airport_name['en']}"
 
     class Meta:
         managed = False

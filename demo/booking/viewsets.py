@@ -20,6 +20,8 @@ from .models import (
     Ticket
 )
 
+from .tasks import send_change_flight_date
+
 from .paginations import (
     BasePagination,
 )
@@ -51,6 +53,14 @@ class FlightViewSet(ModelViewSet):
     serializer_class = FlightSerializer
     queryset = Flight.objects.all()
     pagination_class = BasePagination
+
+    def perform_update(self, serializer):
+        flight_id = str(self.request).split('/')[-2]
+        flight = Flight.objects.get(flight_id=flight_id)
+        old_departure_date = flight.scheduled_departure
+        old_arrival_date = flight.scheduled_arrival
+        instance = serializer.save()
+        send_change_flight_date(old_departure_date, old_arrival_date, instance.flight_id)
 
 
 class SeatViewSet(ModelViewSet):
